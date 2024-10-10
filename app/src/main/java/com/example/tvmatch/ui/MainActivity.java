@@ -17,8 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class MainActivity extends AppCompatActivity {
     private AuthManager authManager;
     private TextView statusTextView;
-    private Button loginButton;
-    private Button logoutButton;
+    private Button loginButton, logoutButton, startButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         loginButton=findViewById(R.id.loginButton);
         statusTextView=findViewById(R.id.statusTextView);
         logoutButton=findViewById(R.id.logoutButton);
+        startButton=findViewById(R.id.startButton);
 
 
         authManager = new AuthManager();
@@ -39,11 +39,15 @@ public class MainActivity extends AppCompatActivity {
                 if (user != null) {
                     // User is signed in
                     statusTextView.setText("Welcome, " + user.getEmail());
-                    loginButton.setVisibility(View.GONE);  // Hide login button if the user is already signed in
+                    loginButton.setVisibility(View.GONE);// Hide login button if the user is already signed in
+                    startButton.setVisibility(View.VISIBLE);
+                    logoutButton.setVisibility(View.VISIBLE);
                 } else {
                     // User is signed out, but stay on this screen and show login option
                     statusTextView.setText("You are not logged in.");
                     loginButton.setVisibility(View.VISIBLE);
+                    logoutButton.setVisibility(View.GONE);
+                    startButton.setVisibility(View.GONE);
                 }
             }
         });
@@ -60,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 authManager.signOut();
-
             }
         });
     }
