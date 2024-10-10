@@ -1,5 +1,6 @@
 package com.example.tvmatch.ui;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
 import com.example.tvmatch.auth.AuthManager;
 import com.example.tvmatch.R;
 import com.google.firebase.FirebaseApp;
@@ -63,7 +65,17 @@ public class MainActivity extends AppCompatActivity {
         logoutButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                authManager.signOut();
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Logout Confirmation")
+                        .setMessage("Are you sure you want to logout?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                authManager.signOut();
+                            }
+                        })
+                        .setNegativeButton("No", null) // Dismiss dialog
+                        .show();
             }
         });
     }
