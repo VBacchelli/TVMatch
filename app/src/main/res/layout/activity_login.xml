@@ -13,7 +13,7 @@
         android:id="@+id/emailEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Email"
+        android:hint="Enter username or email"
         android:inputType="textEmailAddress"
         android:padding="16dp"
         android:layout_marginTop="16dp"
