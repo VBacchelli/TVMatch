@@ -1,6 +1,7 @@
 package com.example.tvmatch.ui;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -60,7 +62,7 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                registerUser(username, email, password);
+                checkUsernameUniqueness(username,email,password);
             }
         });
     }
@@ -77,7 +79,6 @@ public class RegisterActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
                                         // Sign in success
-                                        Toast.makeText(RegisterActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                                         finish();
                                     } else {
                                         // If sign in fails, display a message to the user.
@@ -110,6 +111,33 @@ public class RegisterActivity extends AppCompatActivity {
                             // Redirect to login or main activity
                         } else {
                             Toast.makeText(RegisterActivity.this, "Failed to store username", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    private void checkUsernameUniqueness(final String username, final String email, final String password) {
+        // Query Firestore to check if the username exists
+        db.collection("users")
+                .whereEqualTo("username", username)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            if (!task.getResult().isEmpty()) {
+                                // Username is already taken
+                                Log.d("RegisterActivity", "Username exists: " + task.getResult().getDocuments());
+                                Toast.makeText(RegisterActivity.this, "Username is already taken. Please choose another.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                // Username is unique, proceed with registration
+                                Log.d("RegisterActivity", "Username is unique");
+                                registerUser(username, email, password);
+                            }
+                        } else {
+                            // Handle error
+                            Log.e("RegisterActivity", "Error checking username: ", task.getException());
+                            Toast.makeText(RegisterActivity.this, "Error checking username. Try again later.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
